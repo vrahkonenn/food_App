@@ -16,7 +16,14 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: false,
-    }        
+    },
+    
+    recipes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recipe'
+      }
+    ]
 })
 
 // Modifying schema, which is returned when document is fetched 
