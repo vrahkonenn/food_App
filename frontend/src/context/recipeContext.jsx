@@ -11,8 +11,7 @@ export const RecipeContextProvider = (props) => {
     const fetchRecipes = async () => {
         console.log('fetch recipe kutsuttiin')
         const response = await recipeService.getAll()
-        const mappedRecipes = response.map(recipe => <p key={recipe.id}>{recipe.name}</p>)
-        setRecipes(mappedRecipes)
+        setRecipes(response)
     }
 
     return(

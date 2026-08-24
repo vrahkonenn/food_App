@@ -1,18 +1,12 @@
-import { useContext } from "react"
-import { useEffect } from "react"
-import RecipeContext from "../context/recipeContext"
+import RecipeList from "./RecipeList"
 
 const Home = () => {
-    const { recipes, setRecipes, fetchRecipes } = useContext(RecipeContext)
 
-    useEffect(() => {
-        fetchRecipes()
-    }, [])
 
     return(
         <div>
             <p>Tänne tulee etusivu</p>
-            {recipes}
+            <RecipeList />
         </div>
     )
 }
