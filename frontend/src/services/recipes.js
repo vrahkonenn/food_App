@@ -9,6 +9,16 @@ const getAll = async () => {
     return await response.json()
 }
 
+const getOne = async (id) => {
+    const response = await fetch(`${baseUrl}/${id}`)
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch recipe')
+    }
+
+    return await response.json()
+}
+
 const createRecipe = async (recipe, token) => {
     const bearerToken = `Bearer ${token}`
 
@@ -26,4 +36,4 @@ const createRecipe = async (recipe, token) => {
     return await response.json()
 }
 
-export default { getAll, createRecipe}
+export default { getAll, getOne, createRecipe}

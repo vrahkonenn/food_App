@@ -5,7 +5,6 @@ const Home = () => {
 
     return(
         <div>
-            <p>Tänne tulee etusivu</p>
             <RecipeList />
         </div>
     )

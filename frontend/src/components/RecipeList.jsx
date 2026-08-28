@@ -2,6 +2,8 @@ import { useContext, useEffect } from "react"
 import { Box, Typography } from "@mui/material"
 import RecipeContext from "../context/recipeContext"
 import RecipeCard from "./RecipeCard"
+import { Link } from "react-router-dom"
+
 
 const RecipeList = () => {
   const { recipes, fetchRecipes } = useContext(RecipeContext)
@@ -53,11 +55,12 @@ const RecipeList = () => {
           }}
         >
           {recipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              name={recipe.name}
-              image={recipe.image}
-            />
+            <Link key={recipe.id} to={`/recipes/${recipe.id}`} >
+              <RecipeCard
+                name={recipe.name}
+                image={recipe.image}
+                />
+            </Link>
           ))}
         </Box>
       )}
