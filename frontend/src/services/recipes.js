@@ -36,4 +36,20 @@ const createRecipe = async (recipe, token) => {
     return await response.json()
 }
 
-export default { getAll, getOne, createRecipe}
+const deleteRecipe = async (id, token) => {
+    const bearerToken = `Bearer ${token}`
+
+    const options = {
+        method: 'DELETE',
+        headers: {'Authorization': bearerToken},
+    }
+
+    const response = await fetch(`${baseUrl}/${id}`, options)
+
+    if (!response.ok) {
+        throw new Error('Failed to delete a recipe')
+    }
+    return await response.json()
+}
+
+export default { getAll, getOne, createRecipe, deleteRecipe}

@@ -1,16 +1,52 @@
 import recipeService from "../services/recipes"
-import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useState, useEffect, useContext } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import recipeContext from "../context/recipeContext"
+import authContext from "../context/authContext"
 import {
     Box,
     Typography,
     Paper,
     Divider,
+    Button,
 } from "@mui/material"
 
 const Recipe = () => {
     const [recipe, setRecipe] = useState(null)
+    const [favorite, setFavorite] = useState(false)
+
     const { id } = useParams()
+    const navigate = useNavigate()
+
+    const { user } = useContext(authContext)
+    const { recipes, setRecipes } = useContext(recipeContext)
+
+    const handleFavoriteClick = () => {
+        setFavorite(!favorite)
+    }
+
+    const handleDeleteClick = async () => {
+        const confirmed = window.confirm(
+            "Are you sure you want to delete this recipe?"
+        )
+
+        if (!confirmed) {
+            return
+        }
+
+        try {
+            await recipeService.deleteRecipe(id, user.token)
+
+            const filteredRecipes = recipes.filter(
+                recipe => recipe.id !== id
+            )
+
+            setRecipes(filteredRecipes)
+            navigate("/")
+        } catch (error) {
+            console.log("Deleting recipe failed:", error)
+        }
+    }
 
     useEffect(() => {
         const fetchRecipe = async () => {
@@ -37,6 +73,10 @@ const Recipe = () => {
         )
     }
 
+    const creatorUser = Boolean(
+        user && recipe.user.id === user.id
+    )
+
     return (
         <Box
             sx={{
@@ -44,7 +84,24 @@ const Recipe = () => {
                 py: { xs: 3, md: 6 },
             }}
         >
-            {/* Pääsisältö */}
+
+        {/* Hero-kuva */}
+        <Box
+            component="img"
+            src={recipe.image}
+            alt={recipe.name}
+            sx={{
+                width: "100%",
+                height: {
+                    xs: "250px",
+                    sm: "350px",
+                    md: "500px",
+                },
+                objectFit: "cover",
+                display: "block",
+                boxShadow: 4,
+            }}
+        />
             <Box
                 sx={{
                     width: {
@@ -56,24 +113,118 @@ const Recipe = () => {
                     margin: "0 auto",
                 }}
             >
-                {/* Hero-kuva */}
+
+                {/* Toimintonapit */}
                 <Box
-                    component="img"
-                    src={recipe.image}
-                    alt={recipe.name}
                     sx={{
-                        width: "100%",
-                        height: {
-                            xs: "250px",
-                            sm: "350px",
-                            md: "500px",
-                        },
-                        objectFit: "cover",
-                        borderRadius: 4,
-                        display: "block",
-                        boxShadow: 4,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        gap: 1,
+                        mt: 1.5,
                     }}
-                />
+                >
+                    
+                    {/* Suosikki */}
+                    <Button
+                        onClick={handleFavoriteClick}
+                        variant="text"
+                        sx={{
+                            color: "primary.main",
+                            fontSize: "0.75rem",
+                            fontWeight: 600,
+                            minWidth: "auto",
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 2,
+
+                            "&:hover": {
+                                backgroundColor:
+                                    "rgba(245, 124, 0, 0.08)",
+                            },
+                        }}
+                    >
+                        <span
+                            className="material-symbols-outlined"
+                            style={{
+                                fontSize: "22px",
+                                marginRight: "5px",
+                                fontVariationSettings: `'FILL' ${
+                                    favorite ? 1 : 0
+                                }, 'wght' 400, 'GRAD' 0, 'opsz' 48`,
+                            }}
+                        >
+                            favorite
+                        </span>
+
+                        SUOSIKKI
+                    </Button>
+
+                    {/* Kommentoi */}
+                    <Button
+                        variant="text"
+                        sx={{
+                            color: "primary.main",
+                            fontSize: "0.75rem",
+                            fontWeight: 600,
+                            minWidth: "auto",
+                            px: 1,
+                            py: 0.5,
+                            borderRadius: 2,
+
+                            "&:hover": {
+                                backgroundColor:
+                                    "rgba(245, 124, 0, 0.08)",
+                            },
+                        }}
+                    >
+                        <span
+                            className="material-symbols-outlined"
+                            style={{
+                                fontSize: "22px",
+                                marginRight: "5px",
+                            }}
+                        >
+                            chat_bubble
+                        </span>
+
+                        KOMMENTOI
+                    </Button>
+
+                    {/* Poista */}
+                    {creatorUser && (
+                        <Button
+                            onClick={handleDeleteClick}
+                            variant="text"
+                            sx={{
+                                color: "primary.main",
+                                fontSize: "0.75rem",
+                                fontWeight: 600,
+                                minWidth: "auto",
+                                px: 1,
+                                py: 0.5,
+                                borderRadius: 2,
+
+                                "&:hover": {
+                                    backgroundColor:
+                                        "rgba(245, 124, 0, 0.08)",
+                                },
+                            }}
+                        >
+                            <span
+                                className="material-symbols-outlined"
+                                style={{
+                                    fontSize: "22px",
+                                    marginRight: "5px",
+                                }}
+                            >
+                                delete
+                            </span>
+
+                            POISTA
+                        </Button>
+                    )}
+                </Box>
 
                 {/* Nimi ja kuvaus */}
                 <Box
