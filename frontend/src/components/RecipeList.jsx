@@ -4,10 +4,9 @@ import RecipeContext from "../context/recipeContext"
 import RecipeCard from "./RecipeCard"
 import { Link } from "react-router-dom"
 
-
 const RecipeList = () => {
   const { recipes, fetchRecipes } = useContext(RecipeContext)
-
+  
   useEffect(() => {
     fetchRecipes()
   }, [])
@@ -55,10 +54,11 @@ const RecipeList = () => {
           }}
         >
           {recipes.map((recipe) => (
-            <Link key={recipe.id} to={`/recipes/${recipe.id}`} >
+            <Link key={recipe.id} to={`/recipes/${recipe.id}`} style={{ textDecoration: "none", color: "inherit" }}>
               <RecipeCard
                 name={recipe.name}
                 image={recipe.image}
+                id={recipe.id}
                 />
             </Link>
           ))}

@@ -1,6 +1,7 @@
 const userRouter = require('express').Router()
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
+const middleware = require('../utils/middleware')
 
 // Get all users
 userRouter.get('/', async (request, response, next) => {
@@ -54,6 +55,43 @@ userRouter.post('/', async (request, response, next) => {
       username: savedUser.username,
       email: savedUser.email
     })
+  } catch (error) {
+    next(error)
+  }
+})
+
+// Update user (for updating favourites)
+userRouter.put('/profile', middleware.userExtractor, async (request, response, next) => {
+  try {
+    const user = request.user
+    if (!user) return response.status(401).json({ error: 'User not logged in'})
+    
+    const id = user._id
+
+    const userToUpdate = await User.findById(id)
+    if (!userToUpdate) return response.status(404).json({ error: "user not found"})
+
+    if (userToUpdate.id.toString() !== user.id.toString()) {
+      return response.status(403).json({ error: 'You can only update your own account'})
+    }
+
+    const { username, email, favourites } = request.body
+      
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        username,
+        email,
+        favourites
+      },
+      {
+        returnDocument: 'after',
+        runValidators: true
+      }
+    )
+      
+    response.json(updatedUser)
+
   } catch (error) {
     next(error)
   }

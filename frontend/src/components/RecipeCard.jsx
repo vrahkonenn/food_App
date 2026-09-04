@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useContext } from "react"
 import {
   Card,
   CardMedia,
@@ -6,12 +6,57 @@ import {
   Typography,
   IconButton,
 } from "@mui/material"
+import userService from "../services/user"
+import authContext from "../context/authContext"
 
-const RecipeCard = ({ name, image }) => {
+
+const RecipeCard = ({ name, image, id }) => {
   const [favorite, setFavorite] = useState(false)
+  const { user, setUser } = useContext(authContext)
 
-  const handleFavoriteClick = () => {
-    setFavorite(!favorite)
+  useEffect(() => {
+    if (user) {
+      setFavorite(user.favourites?.includes(id) || false)
+      }
+  }, [user])
+
+  const handleFavoriteClick = async (event) => {
+    event.preventDefault()
+    if (!user) {
+      window.alert('Reseptin voi asettaa suosikiksi vain kirjautunut käyttäjä!')
+      return
+    }
+    try {
+      let newFavourites = []
+      if (favorite) {
+          newFavourites = user.favourites.filter(
+              favouriteId => favouriteId !== id
+          )
+        } else {
+            newFavourites = [
+                ...user.favourites,
+                id
+            ]
+        }
+        const updatedUser = await userService.update(
+            user.username,
+            user.email,
+            newFavourites,
+            user.token
+        )
+        const updatedUserWithToken = {
+            ...updatedUser,
+            token: user.token
+        }
+        setUser(updatedUserWithToken)
+        window.localStorage.setItem(
+            'loggedFoodAppUser',
+            JSON.stringify(updatedUserWithToken)
+        )
+        setFavorite(!favorite)
+    } catch (error) {
+        console.log("Setting as favourite failed:", error)
+    }
   }
 
   return (
@@ -76,13 +121,14 @@ const RecipeCard = ({ name, image }) => {
           sx={{
             flexShrink: 0,
             padding: 0.5,
+            color: "primary.main"
           }}
         >
           <span
             className="material-symbols-outlined"
             style={{
               fontSize: "30px",
-              color: "#e53935",
+              color: "inherit",
               fontVariationSettings: `'FILL' ${
                 favorite ? 1 : 0
               }, 'wght' 400, 'GRAD' 0, 'opsz' 48`,

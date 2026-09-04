@@ -1,4 +1,5 @@
 import recipeService from "../services/recipes"
+import userService from "../services/user"
 import { useState, useEffect, useContext } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import recipeContext from "../context/recipeContext"
@@ -18,11 +19,64 @@ const Recipe = () => {
     const { id } = useParams()
     const navigate = useNavigate()
 
-    const { user } = useContext(authContext)
+    const { user, setUser } = useContext(authContext)
     const { recipes, setRecipes } = useContext(recipeContext)
 
-    const handleFavoriteClick = () => {
-        setFavorite(!favorite)
+    const handleFavoriteClick = async (event) => {
+        event.preventDefault()
+        if (!user) {
+            window.alert('Reseptin voi asettaa suosikiksi vain kirjautunut käyttäjä!')
+            return
+        }
+
+        try {
+            let newFavourites = []
+
+            if (favorite) {
+                newFavourites = user.favourites.filter(
+                    favouriteId => favouriteId !== recipe.id
+                )
+            } else {
+                newFavourites = [
+                    ...user.favourites,
+                    recipe.id
+                ]
+            }
+
+            const updatedUser = await userService.update(
+                user.username,
+                user.email,
+                newFavourites,
+                user.token
+            )
+
+            const updatedUserWithToken = {
+                ...updatedUser,
+                token: user.token
+            }
+
+            setUser(updatedUserWithToken)
+
+            window.localStorage.setItem(
+                'loggedFoodAppUser',
+                JSON.stringify(updatedUserWithToken)
+            )
+
+            setFavorite(!favorite)
+
+        } catch (error) {
+            console.log("Setting as favourite failed:", error)
+        }
+    }
+
+    const handleCommentClick = async (event) => {
+        event.preventDefault()
+        if (!user) {
+            window.alert('Kommentoida voi vain kirjautunut käyttäjä!')
+            return
+        }
+
+        console.log('Kommentointi nappia painettiin...')
     }
 
     const handleDeleteClick = async () => {
@@ -48,6 +102,7 @@ const Recipe = () => {
         }
     }
 
+
     useEffect(() => {
         const fetchRecipe = async () => {
             setRecipe(await recipeService.getOne(id))
@@ -55,6 +110,12 @@ const Recipe = () => {
 
         fetchRecipe()
     }, [id])
+
+    useEffect(() => {
+        if (user && recipe) {
+            setFavorite(user.favourites?.includes(recipe.id) || false)
+        }
+    }, [user, recipe])
 
     if (!recipe) {
         return (
@@ -162,6 +223,7 @@ const Recipe = () => {
 
                     {/* Kommentoi */}
                     <Button
+                        onClick={handleCommentClick}
                         variant="text"
                         sx={{
                             color: "primary.main",
