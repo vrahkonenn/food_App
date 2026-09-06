@@ -41,6 +41,44 @@ const instructionSchema = new mongoose.Schema (
   { _id: false }
 )
 
+const commentSchema = new mongoose.Schema (
+  {
+    text: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+  },
+  {
+    timestamps: true
+  }
+)
+
+const ratingSchema = new mongoose.Schema(
+  {
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    }
+  },
+  {
+    timestamps: true
+  }
+)
+
 const recipeSchema = new mongoose.Schema (
   {
     name: {
@@ -88,6 +126,14 @@ const recipeSchema = new mongoose.Schema (
         validator: (instructions) => instructions.length > 0,
         message: "Recipe must have at least 1 step"
       }
+    },
+
+    comments: {
+      type: [commentSchema],
+    },
+
+    ratings: {
+      type: [ratingSchema]
     },
   },
   {

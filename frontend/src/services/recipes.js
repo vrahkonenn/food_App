@@ -52,4 +52,54 @@ const deleteRecipe = async (id, token) => {
     return await response.json()
 }
 
-export default { getAll, getOne, createRecipe, deleteRecipe}
+const commentRecipe = async (id, text, token) => {
+    const bearerToken = `Bearer ${token}`
+
+    const options = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Authorization': bearerToken},
+        body: JSON.stringify({text})
+    }
+
+    const response = await fetch(`${baseUrl}/${id}/comments`, options)
+
+    if (!response.ok) {
+        throw new Error('Failed to comment a recipe')
+    }
+    return await response.json()
+}
+
+const deleteComment = async (id, commentId, token) => {
+    const bearerToken = `Bearer ${token}`
+
+    const options = {
+        method: 'DELETE',
+        headers: {'Authorization': bearerToken},
+    }
+
+    const response = await fetch(`${baseUrl}/${id}/comments/${commentId}`, options)
+
+    if (!response.ok) {
+        throw new Error('Failed to delete a comment')
+    }
+    return await response.json()
+}
+
+const rateRecipe = async (id, rating, token) => {
+    const bearerToken = `Bearer ${token}`
+
+    const options = {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json', 'Authorization': bearerToken},
+        body: JSON.stringify({rating})
+    }
+
+    const response = await fetch(`${baseUrl}/${id}/ratings`, options)
+
+    if (!response.ok) {
+        throw new Error('Failed to rate a recipe')
+    }
+    return await response.json()
+}
+
+export default { getAll, getOne, createRecipe, deleteRecipe, commentRecipe, deleteComment, rateRecipe}

@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import recipeContext from "../context/recipeContext"
 import authContext from "../context/authContext"
+import CommentSection from "./CommentSection"
 import {
     Box,
     Typography,
@@ -465,6 +466,7 @@ const Recipe = () => {
                         </Box>
                     </Paper>
                 </Box>
+                <CommentSection recipe={recipe} setRecipe={setRecipe} recipeId={recipe.id} comments={recipe.comments} />
             </Box>
         </Box>
     )
