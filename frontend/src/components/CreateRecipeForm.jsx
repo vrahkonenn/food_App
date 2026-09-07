@@ -273,7 +273,7 @@ const CreateRecipeForm = () => {
                 onChange={({ target }) =>
                   setServings(target.value)
                 }
-                inputProps={{ min: 1 }}
+                inputprops={{ min: 1 }}
                 fullWidth
                 required
               />
@@ -362,7 +362,7 @@ const CreateRecipeForm = () => {
                         event.target.value
                       )
                     }
-                    inputProps={{ min: 0 }}
+                    inputprops={{ min: 0 }}
                     size="small"
                     required
                   />

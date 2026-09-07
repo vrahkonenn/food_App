@@ -204,12 +204,46 @@ const CommentSection = ({ recipe, setRecipe, recipeId, comments }) => {
                             >
                                 · {getTimeAgo(comment.createdAt)}
                             </Typography>
+                            
+                            {/* POISTO NAPPI */}
+                            { user && comment.user.id === user.id &&
+                                <Box >
+                                    <Button
+                                    onClick={() => handleDeleteComment(comment._id)}
+                                    variant="text"
+                                    sx={{
+                                        color: "primary.main",
+                                        fontSize: "0.75rem",
+                                        fontWeight: 600,
+                                        minWidth: "auto",
+                                        px: 1,
+                                        py: 0.5,
+                                        borderRadius: 2,
+                                        
+                                        "&:hover": {
+                                            backgroundColor:
+                                            "rgba(245, 124, 0, 0.08)",
+                                        },
+                                    }}
+                                    >
+                                        <span
+                                            className="material-symbols-outlined"
+                                            style={{
+                                                fontSize: "22px",
+                                                marginRight: "5px",
+                                            }}
+                                            >
+                                            delete
+                                        </span>
+                                        POISTA
+                                    </Button>
+                                </Box>
+                            }
                         </Box>
 
                         <Typography>
                             {comment.text}
                         </Typography>
-                        <button onClick={() => handleDeleteComment(comment._id)}>DELETE</button>
                     </Paper>
                 ))}
             </Box>

@@ -70,14 +70,16 @@ const Recipe = () => {
         }
     }
 
-    const handleCommentClick = async (event) => {
-        event.preventDefault()
+    const handleCommentClick = () => {
         if (!user) {
-            window.alert('Kommentoida voi vain kirjautunut käyttäjä!')
+            console.log('Kirjaudu kommentoidaksesi')
             return
         }
 
-        console.log('Kommentointi nappia painettiin...')
+        document.getElementById('comments-section')?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        })
     }
 
     const handleDeleteClick = async () => {
@@ -138,6 +140,12 @@ const Recipe = () => {
     const creatorUser = Boolean(
         user && recipe.user.id === user.id
     )
+
+    const commentAmount = recipe.comments?.length || 0
+    const ratingAmount = recipe.ratings.length || 0
+    const averageRating = ratingAmount > 0
+        ? recipe.ratings.reduce((sum, rating) => sum + rating.rating, 0) / ratingAmount
+        : 0
 
     return (
         <Box
@@ -250,8 +258,7 @@ const Recipe = () => {
                         >
                             chat_bubble
                         </span>
-
-                        KOMMENTOI
+                        {commentAmount} KPL
                     </Button>
 
                     {/* Poista */}
@@ -312,6 +319,47 @@ const Recipe = () => {
                     >
                         {recipe.name}
                     </Typography>
+
+                    {/* ARVIOT */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            color: "primary.main",
+                            justifyContent: "center",
+                            px: 1,
+                            py: 0.5,
+                            marginBottom: "10px"
+                        }}
+                    >
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <span
+                                key={star}
+                                className="material-symbols-outlined"
+                                style={{
+                                    fontSize: "30px",
+                                    color: "primary.main",
+                                    fontVariationSettings:
+                                        star <= Math.round(averageRating)
+                                            ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48"
+                                            : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48",
+                                }}
+                            >
+                                star
+                            </span>
+                        ))}
+
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                ml: 0.5,
+                                fontSize: "0.75rem",
+                                fontWeight: 600,
+                            }}
+                        >
+                            ({ratingAmount} ARVIOTA)
+                        </Typography>
+                    </Box>
 
                     <Typography
                         variant="h6"
@@ -466,7 +514,9 @@ const Recipe = () => {
                         </Box>
                     </Paper>
                 </Box>
-                <CommentSection recipe={recipe} setRecipe={setRecipe} recipeId={recipe.id} comments={recipe.comments} />
+                <Box id="comments-section">
+                    <CommentSection recipe={recipe} setRecipe={setRecipe} recipeId={recipe.id} comments={recipe.comments} />
+                </Box>
             </Box>
         </Box>
     )
