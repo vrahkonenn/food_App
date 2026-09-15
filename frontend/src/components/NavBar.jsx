@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import {
   AppBar,
@@ -6,19 +6,35 @@ import {
   Button,
   Typography,
   Box,
+  IconButton,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from "@mui/material"
+
 import AuthContext from "../context/authContext"
+import logo from "../assets/vruoka2.png"
 
 const NavBar = () => {
   const { user, setUser } = useContext(AuthContext)
   const location = useLocation()
 
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
   const logOut = () => {
     setUser(null)
     window.localStorage.removeItem("loggedFoodAppUser")
+    setDrawerOpen(false)
   }
 
   const isActive = (path) => location.pathname === path
+
+  const closeDrawer = () => {
+    setDrawerOpen(false)
+  }
 
   const navButtonSx = (path) => ({
     color: isActive(path) ? "primary.main" : "text.primary",
@@ -34,142 +50,344 @@ const NavBar = () => {
   })
 
   return (
-    <AppBar
-      position="fixed"
-      elevation={0}
-      sx={{
-        backgroundColor: "background.paper",
-        color: "text.primary",
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.10)",
-      }}
-    >
-      <Toolbar
+    <>
+      <AppBar
+        position="fixed"
+        elevation={0}
         sx={{
-          minHeight: "72px",
-          px: {
-            xs: 2,
-            md: 5,
-          },
+          backgroundColor: "background.paper",
+          color: "text.primary",
+          boxShadow: "0 2px 10px rgba(0, 0, 0, 0.10)",
         }}
       >
-        {/* Logo */}
-        <Typography
-          variant="h5"
-          component={Link}
-          to="/"
+        <Toolbar
           sx={{
-            textDecoration: "none",
-            color: "text.primary",
-            fontWeight: 800,
-            letterSpacing: "-0.5px",
-
-            "&:hover": {
-              color: "primary.main",
+            minHeight: "72px",
+            px: {
+              xs: 2,
+              md: 5,
             },
           }}
         >
-          Food App
-        </Typography>
+          {/* Logo */}
+<Box
+  component={Link}
+  to="/"
+  sx={{
+    display: "flex",
+    alignItems: "center",
+    textDecoration: "none",
+  }}
+>
+  <Box
+    component="img"
+    src={logo}
+    alt="Reseptitori"
+    sx={{
+      height: 60,
+      width: "auto",
+      display: "block",
+    }}
+  />
+</Box>
 
-        {/* Keskellä olevat navigointilinkit */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexGrow: 1,
-            gap: 1,
-          }}
-        >
-          <Button
-            component={Link}
-            to="/"
-            sx={navButtonSx("/")}
-          >
-            Home
-          </Button>
-
-          <Button
-            component={Link}
-            to="/recipes/new"
-            sx={navButtonSx("/recipes/new")}
-          >
-            New recipe
-          </Button>
-        </Box>
-
-        {/* Oikea puoli */}
-        {user ? (
+          {/* Desktop navigaatio */}
           <Box
             sx={{
-              display: "flex",
+              display: {
+                xs: "none",
+                md: "flex",
+              },
+              justifyContent: "center",
               alignItems: "center",
-              gap: 2,
-            }}
-          >
-            <Typography
-              sx={{
-                color: "text.secondary",
-                display: {
-                  xs: "none",
-                  sm: "block",
-                },
-              }}
-            >
-              Logged in as{" "}
-              <Box
-                component="span"
-                sx={{
-                  color: "text.primary",
-                  fontWeight: 700,
-                }}
-              >
-                {user.username}
-              </Box>
-            </Typography>
-
-            <Button
-              onClick={logOut}
-              sx={{
-                color: "text.primary",
-                fontWeight: 500,
-                borderRadius: 2,
-
-                "&:hover": {
-                  backgroundColor: "rgba(0, 0, 0, 0.05)",
-                },
-              }}
-            >
-              Logout
-            </Button>
-          </Box>
-        ) : (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
+              flexGrow: 1,
               gap: 1,
             }}
           >
             <Button
               component={Link}
-              to="/login"
-              sx={navButtonSx("/login")}
+              to="/"
+              startIcon={
+                <span className="material-symbols-outlined">
+                  home
+                </span>
+              }
+              sx={navButtonSx("/")}
             >
-              Login
+              Etusivu
             </Button>
 
             <Button
               component={Link}
-              to="/register"
-              sx={navButtonSx("/register")}
+              to="/recipes/new"
+              startIcon={
+                <span className="material-symbols-outlined">
+                  add
+                </span>
+              }
+              sx={navButtonSx("/recipes/new")}
             >
-              Register
+              Uusi resepti
             </Button>
           </Box>
-        )}
-      </Toolbar>
-    </AppBar>
+
+          {/* Desktop käyttäjätoiminnot */}
+          <Box
+            sx={{
+              display: {
+                xs: "none",
+                md: "flex",
+              },
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            {user ? (
+              <>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 0.5,
+                    mr: 1,
+                  }}
+                >
+                  <span className="material-symbols-outlined">
+                    account_circle
+                  </span>
+
+                  <Typography
+                    sx={{
+                      color: "text.primary",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {user.username}
+                  </Typography>
+                </Box>
+
+                <Button
+                  onClick={logOut}
+                  startIcon={
+                    <span className="material-symbols-outlined">
+                      logout
+                    </span>
+                  }
+                  sx={{
+                    color: "text.primary",
+                    fontWeight: 500,
+                    borderRadius: 2,
+
+                    "&:hover": {
+                      backgroundColor: "rgba(0, 0, 0, 0.05)",
+                    },
+                  }}
+                >
+                  Kirjaudu ulos
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  component={Link}
+                  to="/login"
+                  startIcon={
+                    <span className="material-symbols-outlined">
+                      login
+                    </span>
+                  }
+                  sx={navButtonSx("/login")}
+                >
+                  Kirjaudu
+                </Button>
+
+                <Button
+                  component={Link}
+                  to="/register"
+                  startIcon={
+                    <span className="material-symbols-outlined">
+                      person_add
+                    </span>
+                  }
+                  sx={navButtonSx("/register")}
+                >
+                  Rekisteröidy
+                </Button>
+              </>
+            )}
+          </Box>
+
+          {/* Mobiilin hamburger */}
+          <IconButton
+            onClick={() => setDrawerOpen(true)}
+            aria-label="Avaa navigaatio"
+            sx={{
+              display: {
+                xs: "flex",
+                md: "none",
+              },
+              ml: "auto",
+              color: "text.primary",
+            }}
+          >
+            <span className="material-symbols-outlined">
+              menu
+            </span>
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      {/* Mobiilin navigaatiovalikko */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={closeDrawer}
+      >
+        <Box
+          sx={{
+            width: 280,
+            pt: 2,
+          }}
+          role="presentation"
+        >
+          {/* Valikon otsikko */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              px: 2,
+              pb: 2,
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+              }}
+            >
+              Valikko
+            </Typography>
+
+            <IconButton onClick={closeDrawer}>
+              <span className="material-symbols-outlined">
+                close
+              </span>
+            </IconButton>
+          </Box>
+
+          <Divider />
+
+          <List>
+            {/* Etusivu */}
+            <ListItemButton
+              component={Link}
+              to="/"
+              selected={isActive("/")}
+              onClick={closeDrawer}
+            >
+              <ListItemIcon>
+                <span className="material-symbols-outlined">
+                  home
+                </span>
+              </ListItemIcon>
+
+              <ListItemText primary="Etusivu" />
+            </ListItemButton>
+
+            {/* Uusi resepti */}
+            <ListItemButton
+              component={Link}
+              to="/recipes/new"
+              selected={isActive("/recipes/new")}
+              onClick={closeDrawer}
+            >
+              <ListItemIcon>
+                <span className="material-symbols-outlined">
+                  add
+                </span>
+              </ListItemIcon>
+
+              <ListItemText primary="Uusi resepti" />
+            </ListItemButton>
+          </List>
+
+          <Divider />
+
+          <List>
+            {user ? (
+              <>
+                {/* Käyttäjä */}
+                <ListItemButton
+                  sx={{
+                    cursor: "default",
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <span className="material-symbols-outlined">
+                      account_circle
+                    </span>
+                  </ListItemIcon>
+
+                  <ListItemText
+                    primary={user.username}
+                    secondary="Kirjautuneena"
+                  />
+                </ListItemButton>
+
+                {/* Logout */}
+                <ListItemButton onClick={logOut}>
+                  <ListItemIcon>
+                    <span className="material-symbols-outlined">
+                      logout
+                    </span>
+                  </ListItemIcon>
+
+                  <ListItemText primary="Kirjaudu ulos" />
+                </ListItemButton>
+              </>
+            ) : (
+              <>
+                {/* Login */}
+                <ListItemButton
+                  component={Link}
+                  to="/login"
+                  selected={isActive("/login")}
+                  onClick={closeDrawer}
+                >
+                  <ListItemIcon>
+                    <span className="material-symbols-outlined">
+                      login
+                    </span>
+                  </ListItemIcon>
+
+                  <ListItemText primary="Kirjaudu" />
+                </ListItemButton>
+
+                {/* Register */}
+                <ListItemButton
+                  component={Link}
+                  to="/register"
+                  selected={isActive("/register")}
+                  onClick={closeDrawer}
+                >
+                  <ListItemIcon>
+                    <span className="material-symbols-outlined">
+                      person_add
+                    </span>
+                  </ListItemIcon>
+
+                  <ListItemText primary="Rekisteröidy" />
+                </ListItemButton>
+              </>
+            )}
+          </List>
+        </Box>
+      </Drawer>
+    </>
   )
 }
 

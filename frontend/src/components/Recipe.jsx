@@ -71,11 +71,6 @@ const Recipe = () => {
     }
 
     const handleCommentClick = () => {
-        if (!user) {
-            console.log('Kirjaudu kommentoidaksesi')
-            return
-        }
-
         document.getElementById('comments-section')?.scrollIntoView({
             behavior: 'smooth',
             block: 'start',
