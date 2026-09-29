@@ -57,12 +57,15 @@ const CommentSection = ({ recipe, setRecipe, recipeId, comments }) => {
     }
 
     const handleDeleteComment = async (commentId) => {
-        try {
-            console.log('Poistetaan kommentti: ', commentId)
-            const response = await recipeService.deleteComment(recipeId, commentId, user.token)
-            setRecipe(response)
-        } catch (error) {
-            console.log(error)
+        const confirmed = window.confirm('Haluatko varmasti poistaa tämän kommentin?')
+        if (confirmed) {
+            try {
+                console.log('Poistetaan kommentti: ', commentId)
+                const response = await recipeService.deleteComment(recipeId, commentId, user.token)
+                setRecipe(response)
+            } catch (error) {
+                console.log(error)
+            }
         }
     }
 
@@ -144,6 +147,7 @@ const CommentSection = ({ recipe, setRecipe, recipeId, comments }) => {
                         <Box
                             component="form"
                             onSubmit={handleCommentEvent}
+                            name="commentform"
                         >
                             <TextField
                                 fullWidth

@@ -119,6 +119,19 @@ const NavBar = () => {
 
             <Button
               component={Link}
+              to="/recipes"
+              startIcon={
+                <span className="material-symbols-outlined">
+                  menu_book
+                </span>
+              }
+              sx={navButtonSx("/recipes")}
+            >
+              Reseptit
+            </Button>
+
+            <Button
+              component={Link}
               to="/recipes/new"
               startIcon={
                 <span className="material-symbols-outlined">
@@ -293,6 +306,21 @@ const NavBar = () => {
               </ListItemIcon>
 
               <ListItemText primary="Etusivu" />
+            </ListItemButton>
+
+            <ListItemButton
+              component={Link}
+              to="/recipes"
+              selected={isActive("/recipes")}
+              onClick={closeDrawer}
+            >
+              <ListItemIcon>
+                <span className="material-symbols-outlined">
+                  menu_book
+                </span>
+              </ListItemIcon>
+
+              <ListItemText primary="Reseptit" />
             </ListItemButton>
 
             {/* Uusi resepti */}

@@ -20,20 +20,37 @@ const getOne = async (id) => {
 }
 
 const createRecipe = async (recipe, token) => {
-    const bearerToken = `Bearer ${token}`
+  const formData = new FormData()
 
-    const options = {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json', 'Authorization': bearerToken},
-        body: JSON.stringify(recipe)
-    }
+  formData.append("name", recipe.name)
+  formData.append("description", recipe.description)
+  formData.append("servings", recipe.servings)
 
-    const response = await fetch(baseUrl, options)
+  formData.append("ingredients",
+    JSON.stringify(recipe.ingredients)
+  )
 
-    if (!response.ok) {
-        throw new Error('Failed to create a recipe')
-    }
-    return await response.json()
+  formData.append("instructions",
+    JSON.stringify(recipe.instructions)
+  )
+
+  if (recipe.image) {
+    formData.append("image", recipe.image)
+  }
+
+  const response = await fetch(baseUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: formData,
+  })
+
+  if (!response.ok) {
+    throw new Error("Failed to create a recipe")
+  }
+
+  return await response.json()
 }
 
 const deleteRecipe = async (id, token) => {

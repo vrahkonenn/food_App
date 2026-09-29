@@ -79,7 +79,7 @@ const Recipe = () => {
 
     const handleDeleteClick = async () => {
         const confirmed = window.confirm(
-            "Are you sure you want to delete this recipe?"
+            "Haluatko varmasti poistaa tämän reseptin?"
         )
 
         if (!confirmed) {
@@ -94,7 +94,7 @@ const Recipe = () => {
             )
 
             setRecipes(filteredRecipes)
-            navigate("/")
+            navigate("/recipes")
         } catch (error) {
             console.log("Deleting recipe failed:", error)
         }
@@ -376,7 +376,7 @@ const Recipe = () => {
                             fontWeight: 500,
                         }}
                     >
-                        Resepti: {recipe.user.username}
+                        Julkaisija: {recipe.user.username}
                     </Typography>
                 </Box>
 

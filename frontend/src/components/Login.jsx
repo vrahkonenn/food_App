@@ -10,6 +10,8 @@ import {
     Button,
     Typography,
 } from "@mui/material"
+import food_background from "../assets/food_background.jpg"
+import { Link } from "react-router-dom"
 
 const Login = () => {
     const { setUser } = useContext(AuthContext)
@@ -50,13 +52,14 @@ return (
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        marginTop: 4,
 
         backgroundImage: `
             linear-gradient(
                 rgba(0, 0, 0, 0.35),
                 rgba(0, 0, 0, 0.35)
             ),
-            url("https://www.undp.org/sites/g/files/zskgke326/files/styles/scaled_image_large/public/2023-12/food.jpg?itok=u9KiNDp4")
+            url(${food_background})
         `,
 
         backgroundSize: "cover",
@@ -90,7 +93,7 @@ return (
                     mb: 1,
                 }}
             >
-                Log in
+                Kirjaudu
             </Typography>
 
             <Typography
@@ -100,7 +103,7 @@ return (
                     mb: 4,
                 }}
             >
-                Kirjaudu sisään nähdäksesi reseptisi
+                Kirjaudu sisään luodaksesi reseptejä!
             </Typography>
 
             <Box
@@ -113,7 +116,7 @@ return (
                 }}
             >
                 <TextField
-                    label="Username"
+                    label="Käyttäjänimi"
                     type="text"
                     value={username}
                     onChange={({ target }) =>
@@ -125,7 +128,7 @@ return (
                 />
 
                 <TextField
-                    label="Password"
+                    label="Salasana"
                     type="password"
                     value={password}
                     onChange={({ target }) =>
@@ -148,8 +151,16 @@ return (
                         fontWeight: 600,
                     }}
                 >
-                    Log in
+                    Kirjaudu
                 </Button>
+                <Typography
+                    sx={{
+                        textAlign: "center",
+                        color: "text.secondary",
+                    }}
+                >
+                    Ei käyttäjätunnusta? <Link to="/register">Rekisteröidy</Link>
+                </Typography>
             </Box>
         </Paper>
     </Box>

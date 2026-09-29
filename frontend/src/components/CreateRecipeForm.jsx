@@ -18,7 +18,7 @@ const CreateRecipeForm = () => {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [servings, setServings] = useState("")
-  const [image, setImage] = useState("")
+  const [image, setImage] = useState(null)
 
   const [ingredients, setIngredients] = useState([
     { name: "", amount: "", unit: "" }
@@ -278,15 +278,44 @@ const CreateRecipeForm = () => {
                 required
               />
 
-              <TextField
-                label="Kuvan URL"
-                value={image}
-                onChange={({ target }) =>
-                  setImage(target.value)
-                }
-                fullWidth
-                required
-              />
+              <Box>
+                <Button
+                  variant="outlined"
+                  component="label"
+                >
+                  Valitse reseptikuva
+                  <input
+                    type="file"
+                    accept="image/*"
+                    hidden
+                    onChange={({ target }) => {
+                      setImage(target.files[0] || null)
+                    }}
+                  />
+                </Button>
+
+                {image && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography>
+                      {image.name}
+                    </Typography>
+
+                    <Box
+                      component="img"
+                      src={URL.createObjectURL(image)}
+                      alt="Reseptikuvan esikatselu"
+                      sx={{
+                        width: "100%",
+                        maxWidth: 300,
+                        maxHeight: 250,
+                        objectFit: "cover",
+                        borderRadius: 2,
+                        mt: 1,
+                      }}
+                    />
+                  </Box>
+                )}
+              </Box>
             </Box>
 
 

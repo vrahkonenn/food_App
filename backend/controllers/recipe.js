@@ -1,6 +1,8 @@
 const recipeRouter = require('express').Router()
 const Recipe = require('../models/recipe')
 const middleware = require('../utils/middleware')
+const upload = require("../utils/upload")
+const uploadImage = require("../utils/uploadImage")
 
 // Get all recipes
 recipeRouter.get('/', async (request, response, next) => {
@@ -30,7 +32,7 @@ recipeRouter.get('/:id', async (request, response, next) => {
 })
 
 // Create recipe
-recipeRouter.post('/', middleware.userExtractor, async (request, response, next) => {
+recipeRouter.post('/', middleware.userExtractor, upload.single("image"), async (request, response, next) => {
   try {
     const user = request.user
     if (!user) return response.status(401).json({ error: 'userId invalid or missing'})
@@ -39,19 +41,28 @@ recipeRouter.post('/', middleware.userExtractor, async (request, response, next)
       name,
       description,
       servings,
-      image,
       ingredients,
       instructions,
     } = request.body
 
+    let imageUrl = ""
+
+    // Upload image if one was selected
+    if (request.file) {
+      const result = await uploadImage(
+        request.file.buffer
+      )
+      imageUrl = result.secure_url
+    }
+
     const recipe = new Recipe({
       name,
       description,
-      servings,
-      image,
-      ingredients,
+      servings: Number(servings),
+      image: imageUrl,
+      ingredients: JSON.parse(ingredients),
+      instructions: JSON.parse(instructions),
       user: user._id,
-      instructions
     })
     
     const savedRecipe = await recipe.save()

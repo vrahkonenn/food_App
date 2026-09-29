@@ -8,6 +8,7 @@ import {
     Button,
     Typography,
 } from "@mui/material"
+import food_background from "../assets/food_background.jpg"
 
 const Register = () => {
     const [username, setUsername] = useState("")
@@ -51,7 +52,7 @@ const Register = () => {
                         rgba(0, 0, 0, 0.35),
                         rgba(0, 0, 0, 0.35)
                     ),
-                    url("https://www.undp.org/sites/g/files/zskgke326/files/styles/scaled_image_large/public/2023-12/food.jpg?itok=u9KiNDp4")
+                    url(${food_background})
                 `,
 
                 backgroundSize: "cover",
@@ -68,6 +69,7 @@ const Register = () => {
                 sx={{
                     width: "100%",
                     maxWidth: 450,
+                    marginTop: 7,
 
                     p: {
                         xs: 3,
@@ -87,7 +89,7 @@ const Register = () => {
                         mb: 1,
                     }}
                 >
-                    Register
+                    Rekisteröidy
                 </Typography>
 
                 <Typography
@@ -110,7 +112,7 @@ const Register = () => {
                     }}
                 >
                     <TextField
-                        label="Username"
+                        label="Käyttäjänimi"
                         type="text"
                         value={username}
                         onChange={({ target }) =>
@@ -122,18 +124,7 @@ const Register = () => {
                     />
 
                     <TextField
-                        label="Email"
-                        type="email"
-                        value={email}
-                        onChange={({ target }) =>
-                            setEmail(target.value)
-                        }
-                        fullWidth
-                        autoComplete="email"
-                    />
-
-                    <TextField
-                        label="Password"
+                        label="Salasana"
                         type="password"
                         value={password}
                         onChange={({ target }) =>
@@ -156,7 +147,7 @@ const Register = () => {
                             fontWeight: 600,
                         }}
                     >
-                        Register
+                        Rekisteröidy
                     </Button>
                 </Box>
             </Paper>
